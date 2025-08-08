@@ -1,0 +1,24 @@
+---
+- name: copy message
+  hosts: all
+
+  tasks:
+    - name: Print message
+      copy:
+        content: "Developement Sunday"
+        dest: /etc/issue
+      when: inventory_hostname in groups['dev']
+
+     
+    - name: Print message
+      copy:
+        content: "Test Sunday"
+        dest: /etc/issue
+      when: inventory_hostname in groups['test']
+
+     
+    - name: Print message
+      copy:
+        content: "Production Sunday"
+        dest: /etc/issue
+      when: inventory_hostname in groups['prod']
