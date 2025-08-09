@@ -1,0 +1,37 @@
+---
+- name: create LVM
+  hosts: all
+
+  tasks:
+    - name: Create LVM
+      block:
+        - name: Print Check message
+          debug:
+            msg: "vg not found"
+          when: "'research' not in ansible_facts['lvm']['vgs']"
+
+        - name: Create LVM
+          lvol:
+            vg: research
+            lv: data
+            size: 1500M
+          when: "'research' in ansible_facts['lvm']['vgs']"
+
+      rescue:
+        - name: Print fail message
+          debug:
+            msg: "Insufficient size of vg"
+          
+        - name: Create LVM
+          lvol:
+            vg: research
+            lv: data
+            size: 100%FREE
+          when: "'research' in ansible_facts['lvm']['vgs']"
+
+      always:
+        - name: Create filesystem
+          filesystem:
+            fstype: ext3
+            dev: /dev/research/data
+          when: inventory_hostname in groups['dev']  
