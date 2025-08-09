@@ -1,0 +1,46 @@
+---
+- name: Create Partition
+  hosts: all
+
+  tasks:
+    - name: Print faill message
+      debug:
+        msg: "sda disk does not exist"
+      when: "'sda' not in ansible_facts['devices']"  
+      
+    - name: Create part
+      block:
+          - name: Create partition
+            parted:
+              device: /dev/sda
+              number: 1
+              state: present
+              part_end: 1500MiB
+            when: "'sda' in ansible_facts['devices']"
+
+      rescue:
+          - name: Print fail message
+            debug:
+              msg: "Could not create partition of 1500MiB"
+
+          - name: Create partition
+            parted:
+              device: /dev/sda
+              number: 1
+              state: present
+              part_end: 800MiB
+          #when: "'sda' in ansible_facts['devices']"
+          
+      always:
+          - name: Creat filesystem
+            filesystem:
+              fstype: ext4
+              dev: /dev/sda1
+              force: yes
+
+          - name: Mount directory
+            mount:
+              path: /mnt
+              src: /dev/sda1
+              state: present
+            when: inventory_hostname in groups['prod']
