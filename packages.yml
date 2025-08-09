@@ -1,0 +1,40 @@
+---
+- name: Install packages
+  hosts: dev
+
+  tasks:
+    - name: Install package
+      dnf:
+        name: 
+          - vsftpd
+          - mariadb-server
+        state: present
+
+- name: Install packages
+  hosts: test
+
+  tasks:
+    - name: Install package
+      dnf:
+        name:
+          - vsftpd
+          - mariadb-server
+        state: present
+
+- name: Install packages
+  hosts: prod
+
+  tasks:
+    - name: Install package
+      dnf:
+        name: "@RPM Development Tools"
+        state: present
+
+- name: Install packages
+  hosts: dev
+
+  tasks:
+    - name: Install package
+      dnf:
+        name: "*"
+        state: latest
