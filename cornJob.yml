@@ -1,0 +1,11 @@
+---
+- name: Create CornJob
+  hosts: all
+
+  tasks:
+    - name: Run a job
+      cron:
+        name: "Learning Ansible"
+        user: ansible
+        minute: "*/2"
+        job: logger "Learning Ansible Final Sunday"
